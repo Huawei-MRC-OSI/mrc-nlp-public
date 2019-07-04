@@ -1,0 +1,55 @@
+FROM ufoym/deepo:all-jupyter
+
+RUN echo 1
+
+COPY proxy-certificates.sh /install/proxy-certificates.sh
+RUN /bin/sh /install/proxy-certificates.sh
+
+RUN apt-get update --fix-missing
+RUN apt-get install -y sudo
+
+COPY set_java_home.sh /install/set_java_home.sh
+RUN /bin/sh /install/set_java_home.sh
+COPY with_the_same_user.sh /install/with_the_same_user.sh
+
+RUN apt-get install -y ipython3
+RUN pip3 install keras
+RUN pip3 install sklearn
+RUN apt-get install -y openjdk-8-jdk
+
+COPY proxy-environment.sh /install/proxy-environment.sh
+RUN /bin/sh /install/proxy-environment.sh
+
+RUN pip3 install scikit-learn seaborn
+RUN apt-get install -y libgl1-mesa-glx
+RUN pip3 install PyQT5 PySide2
+RUN apt-get install -y libqt5x11extras5
+RUN apt-get install -y x11-apps
+
+# My custom stuff
+RUN add-apt-repository ppa:jonathonf/vim
+RUN apt-get update --fix-missing
+ARG DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tmux vim-gtk3
+RUN apt-get install -y git gcc
+RUN apt-get install -y ctags cmake tig wget silversearcher-ag
+RUN apt-get install -y net-tools
+
+# pytorch should be already installed
+# Install pytorch for cuda10, ignore certificate errors
+# RUN pip3 install --trusted-host download.pytorch.org https://download.pytorch.org/whl/cu100/torch-1.1.0-cp35-cp35m-linux_x86_64.whl
+# RUN pip3 install --trusted-host download.pytorch.org https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp35-cp35m-linux_x86_64.whl
+
+RUN pip3 install tensorflow_hub bert-tensorflow seqeval pytorch-pretrained-bert tensorboardX
+# deepo contains tf 2.0 for some reason, install the stable version instead
+RUN pip3 install tensorflow-gpu
+
+RUN rm /etc/bash.bashrc
+
+RUN apt-get install -y locales
+RUN locale-gen "en_US.UTF-8"
+
+RUN apt-get install -y less bash-completion
+
+# Needed by distiller
+RUN pip3 install tabulate gitpython pytest xlsxwriter torchnet pydot

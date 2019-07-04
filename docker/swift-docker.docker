@@ -1,0 +1,28 @@
+FROM tensorflow/tensorflow:1.14.0-gpu-py3-jupyter
+
+COPY proxy-certificates.sh /install/proxy-certificates.sh
+RUN /bin/sh /install/proxy-certificates.sh
+
+RUN apt-get update --fix-missing
+RUN apt-get install -y sudo
+RUN apt-get install -y openjdk-11-jdk
+
+COPY set_java_home.sh /install/set_java_home.sh
+RUN /bin/sh /install/set_java_home.sh
+COPY with_the_same_user.sh /install/with_the_same_user.sh
+COPY proxy-environment.sh /install/proxy-environment.sh
+RUN /bin/sh /install/proxy-environment.sh
+
+RUN apt-get install -y wget
+RUN wget https://github.com/bazelbuild/bazel/releases/download/0.25.2/bazel-0.25.2-installer-linux-x86_64.sh
+RUN chmod +x bazel-0.25.2-installer-linux-x86_64.sh
+RUN ./bazel-0.25.2-installer-linux-x86_64.sh
+RUN rm bazel-0.25.2-installer-linux-x86_64.sh
+
+RUN apt-get install -y python
+RUN apt-get install -y clang
+RUN apt-get install -y cmake
+RUN apt-get install -y git
+RUN apt-get install -y uuid-dev
+RUN apt-get install -y ninja-build
+RUN apt-get install -y libxml2-dev

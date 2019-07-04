@@ -1,0 +1,25 @@
+FROM tensorflow/tensorflow:1.13.1-gpu-py3-jupyter
+
+COPY proxy-certificates.sh /install/proxy-certificates.sh
+RUN /bin/sh /install/proxy-certificates.sh
+
+RUN apt-get update --fix-missing
+RUN apt-get install -y sudo
+
+COPY set_java_home.sh /install/set_java_home.sh
+RUN /bin/sh /install/set_java_home.sh
+COPY with_the_same_user.sh /install/with_the_same_user.sh
+
+RUN apt-get install -y ipython3
+RUN pip3 install keras
+RUN pip3 install sklearn
+
+COPY proxy-environment.sh /install/proxy-environment.sh
+RUN /bin/sh /install/proxy-environment.sh
+
+RUN pip3 install scikit-learn seaborn
+RUN apt-get install -y libgl1-mesa-glx
+RUN pip3 install PyQT5 PySide2
+RUN apt-get install -y libqt5x11extras5
+RUN apt-get install -y x11-apps
+RUN pip3 install python-language-server
