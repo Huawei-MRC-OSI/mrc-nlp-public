@@ -1,0 +1,43 @@
+FROM ufoym/deepo:pytorch-py36-cu100
+
+RUN echo 1
+
+COPY proxy-certificates.sh /install/proxy-certificates.sh
+RUN /bin/sh /install/proxy-certificates.sh
+
+RUN apt-get update --fix-missing
+RUN apt-get install -y sudo
+
+COPY set_java_home.sh /install/set_java_home.sh
+RUN /bin/sh /install/set_java_home.sh
+COPY with_the_same_user.sh /install/with_the_same_user.sh
+
+RUN apt-get install -y python3-pip
+#RUN pip3 install tensorflow-gpu
+#RUN pip3 install keras
+RUN pip3 install sklearn
+
+COPY proxy-environment.sh /install/proxy-environment.sh
+RUN /bin/sh /install/proxy-environment.sh
+
+RUN pip3 install scikit-learn
+
+# Install pytorch for cuda10, ignore certificate errors
+# RUN pip3 install --trusted-host download.pytorch.org https://download.pytorch.org/whl/cu100/torch-1.1.0-cp36-cp36m-linux_x86_64.whl
+# RUN pip3 install --trusted-host download.pytorch.org https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl
+
+RUN pip3 install seqeval tensorboardX
+
+RUN rm /etc/bash.bashrc
+
+RUN apt-get install -y locales
+RUN locale-gen "en_US.UTF-8"
+
+RUN apt-get install -y git
+
+COPY install_apex.sh /install/install_apex.sh
+RUN /bin/sh /install/install_apex.sh
+
+RUN pip3 install tqdm boto3
+RUN pip3 install requests
+
