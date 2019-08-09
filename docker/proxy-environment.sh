@@ -69,3 +69,15 @@ startup --host_jvm_args=-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts \
         --host_jvm_args=-Djavax.net.ssl.trustStorePassword=changeit
 EOF
 
+if test -x `which pip` ; then
+  pip config --global set global.cert /etc/ssl/certs/ca-certificates.crt
+else
+  echo "pip not found, SSL cert not updated. Install pip before executing $0" >&2
+fi
+
+if test -x `which pip3` ; then
+  pip3 config --global set global.cert /etc/ssl/certs/ca-certificates.crt
+else
+  echo "pip3 not found, SSL cert not updated. Install pip3 before executing $0" >&2
+fi
+

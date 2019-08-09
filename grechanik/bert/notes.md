@@ -2,6 +2,20 @@
 
 ## Fine-tuning BERT on the NLU task
 
+* To reproduce run `limited-data-experiment.sh`.
+  Tried to randomize the 10 sentences that are used for training. Fine-tuning BERT alone with these
+  10 sentences results in 9-23% accuracy (on one intent). Fine-tuning on 10 sentences after
+  fine-tuning on the other 6 intents results in 15-30% accuracy (on one intent), but at the cost of
+  forgetting all 6 intents (they are not completely forgotten, accuracy for all 7 intents drops from
+  76% to 30-55% depending on the 10 sentences).
+  If we finetune only the head on these 10 sentences, we get 7-12% accuracy but without any drop on
+  the other intents.
+  If we finetune the head and the last layer, we get 18-30% (more like around 21% though).
+  If we finetune only the head without prefinetuning on 6 intents, we get 14%.
+
+* Changed the head for bert. Now every intent has a separate dense layer for classifying slots, and
+  we train only one head on each example.
+
 * Tried finetuning on 6 intents and then finetuning only on 10 phrases from a single intent. The
   result depends on the number of epochs of the first 6-intent finetuning. For 0 epochs we gen about
   32-36% wfa on PlayMusic, for 1-15 epochs we get 50-55%. However on 16 epochs it breaks and we get

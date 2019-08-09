@@ -45,7 +45,7 @@ if test "$MAPSOCKETS" = "y"; then
 
   # FIXME: Check the port arguments format `ip:porta:portb`. What side does
   # porta/portb belong to?
-  DOCKER_PORT_ARGS="-p 0.0.0.0:$PORT_TENSORBOARD:6006 -p 0.0.0.0:$PORT_JUPYTER:8888 -p $PORT_OMNIBOARD:9000"
+  DOCKER_PORT_ARGS="-p 0.0.0.0:$PORT_TENSORBOARD:6006 -p 0.0.0.0:$PORT_JUPYTER:8888 -p $PORT_OMNIBOARD:9000 -p 0.0.0.0:7777:7777"
   (
   set +x
   echo
@@ -68,7 +68,7 @@ else
 fi
 
 ${DOCKER_CMD} --config "$DOCKER_CFG" \
-    run -it \
+    run -it --rm \
     --volume $CWD:/workspace \
     --workdir /workspace \
     -e HOST_PERMS="$(id -u):$(id -g)" \
@@ -79,6 +79,7 @@ ${DOCKER_CMD} --config "$DOCKER_CFG" \
     -e "CI_BUILD_GID=$(id -g)" \
     -e "DISPLAY=$DISPLAY" \
     -e "EDITOR=$EDITOR" \
+    -e "TERM=$TERM" \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v /nix:/nix \
     ${DOCKER_PORT_ARGS} \
